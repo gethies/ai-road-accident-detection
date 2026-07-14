@@ -1,0 +1,102 @@
+# Implementation Plan: High-Fidelity Accident Detection & Response System (SURE)
+
+This implementation plan outlines the reverse engineering of the "Accident Detection on Indian Roads" project and the creation of a high-fidelity, clickable web prototype based on the actual components found in the ZIP.
+
+## User Review Required
+
+> [!IMPORTANT]
+> The prototype will be built entirely as a static, client-side web application in the workspace root. All Python CLI and Android App functions will be converted into high-fidelity frontend simulation layers. This enables instant deployment, interactive demonstrations (ideal for hackathons and academic presentations), and standalone execution without local server dependencies.
+
+---
+
+## 1. Summary of Reverse Engineered Project Components
+
+### A. Files Analyzed
+1. **Model Specs**: `Python Demo/graph/pipeline.config` (defines training pipeline configurations), `Python Demo/accidents.pbtxt` (class labels).
+2. **Python Demo**: `Python Demo/classifier.py` (CLI classifier), `Python Demo/run.log` (execution warnings and outputs).
+3. **Android Client**: `Android App/app/src/main/.../roadaccidents/MainActivity.java` (UI controller), `Classifier.java` (interface), `TensorFlowImageClassifier.java` (TF Mobile inference logic), `activity_main.xml` (layout view), `label_strings.txt` (labels).
+4. **Static UI Templates**: `index.html`, `style.css`, `app.js` (existing project base to be refactored).
+
+### B. Original Project Features & Configuration
+- **Model Architecture**: Single Shot Multibox Detector (SSD) with MobileNetV1 backbone (`ssd_mobilenet_v1`).
+- **Input Dimensions**: 300x300 pixels, RGB.
+- **Dataset Labels**: ID 1 corresponds to `'car accident'`. Background class is `???`.
+- **Classification Threshold**: Default set to 60% (`0.6f` in Android client; adjustable in Python client via NMS score converters).
+- **Execution Workflow**:
+  - **Python Demo CLI**: Takes inputs via `python classifier.py [Input Image] [Output Image]` and saves the image overlaying predicted boxes, outputting `done. Detections found: 1 \n Accident score: 99.99%`.
+  - **Android Client**: Displays a 300x300 camera frame, a 75x75 thumbnail of the resized bitmap, a text field printing detections string arrays (like `[1] car accident (78.3%)`), and a manual "Detect Object" button.
+
+---
+
+## 2. Proposed Modules & Pages to Generate
+
+We will organize the application into **8 major views** selectable from a premium, animated sidebar navigation menu:
+
+1. **Home / Landing Page** (`landing-view`):
+   - Hero header focusing on road safety statistics in India.
+   - Core metrics based on Ministry of Road Transport and Highways (MoRTH) reports: **480,652 accidents**, **150,785 deaths**, **31.37% death ratio**, aiming to reduce to **0%**.
+   - Interactive SVG/HTML emergency timeline demonstrating the golden-hour response mechanism.
+2. **Project Overview** (`overview-view`):
+   - Detailed review of the academic motivation, why this system is optimized for Indian roads (high vehicle density, chaotic driving, mixed vehicle classes), and the municipal CCTV integration workflow.
+3. **Dataset Section** (`dataset-view`):
+   - Details of the training dataset.
+   - Pipeline records: `train.record` and `test.record`.
+   - Annotation structure: Pascal VOC XML labels mapping to the `car accident` class defined in `accidents.pbtxt`.
+4. **Model Architecture Section** (`architecture-view`):
+   - Technical specifications of the SSD MobileNet V1 model.
+   - Hyperparameter metrics table (RMSProp optimizer, initial learning rate of `0.004`, batch size `16`, decay rate `0.95`).
+   - Interactive Mermaid architecture flowchart.
+   - Mathematical model formulas (Multi-task Loss Combining localization L1 loss and classification confidence Sigmoid loss).
+5. **Detection Console** (`dashboard-view`):
+   - **CCTV Feed Tab**: Drag & drop traffic video/images, load mock Chennai road CCTV streams, run bounding box canvas overlays.
+   - **Android App Emulator Tab**: A visual mobile smartphone shell. Features a 300x300 viewfinder, a 75x75 scaled thumbnail, text status log arrays (`[1] car accident (74%)`), custom threshold slider (default 60%), and a manual "Detect Object" button.
+   - **Python CLI Emulator Tab**: An interactive terminal command simulator. Users type `python classifier.py input.jpg output.jpg` and see real TensorFlow init warning outputs, file logs, and output file directories.
+   - **Results Dashboard**: Real-time evaluation of the processed feed (confidence score, severity, location coordinates, evaluation times).
+   - **Alert Generation Module**: Console with mobilizers for 108 Ambulances, Traffic Police dispatch, and Trauma Unit Pre-Alerts.
+6. **Analytics Hub** (`analytics-view`):
+   - Interactive Leaflet.js GIS Map centered on high-density accident intersections in Chennai (Guindy, Koyambedu, Kathipara, Tambaram GST Road, OMR Sholinganallur).
+   - Multi-axis monthly trend charts (Bar Chart) and incident severity ratios (Doughnut Chart) powered by Chart.js.
+7. **Reports Center** (`reports-view`):
+   - Dynamic report constructor allowing users to compile official incident logs, enter traffic notes, verify agency dispatches, and print/download formatted accident sheets.
+8. **History Logs** (`history-view`):
+   - Database of all system audits reading and writing from local browser storage, allowing search query lookups, severity filters, individual log deletion, and detailed print layouts.
+
+---
+
+## 3. Implementation Details by File
+
+### A. [MODIFY] [index.html](file:///c:/Users/nagar/Downloads/Accident-Detection-on-Indian-Roads-master/index.html)
+- Add the new views (`overview-view`, `dataset-view`, `architecture-view`, `reports-view`) into the HTML markup.
+- Refactor the sidebar menu to contain links for all 8 views.
+- Refactor the Detection Console (`dashboard-view`) to split source screens into:
+  1. CCTV Monitor (CCTV Camera feed, video loops, image processing canvas).
+  2. Android App Simulator (SVG/CSS Smartphone mockup, 300x300 camera frame, 75x75 thumbnail preview, scrolling textView log, "Detect Object" button, and threshold selector).
+  3. Python CLI Simulator (Mock IDE / Terminal output panel showing shell prompt, code logs, and generated files checklist).
+- Add the Reports layout with incident tables, a text area for officer comments, and a printable template container.
+
+### B. [MODIFY] [style.css](file:///c:/Users/nagar/Downloads/Accident-Detection-on-Indian-Roads-master/style.css)
+- Implement UI layouts for:
+  - Smartphone Emulator (notch, screen frame, shadow overlays, layout matches `activity_main.xml`).
+  - Terminal console container (monospaced fonts, command prompt inputs, syntax-colored execution lines).
+  - Dataset card panels (Pascal VOC XML code blocks, tag lists).
+  - Reports designer (table alignments, card layouts, clean styling for print).
+- Ensure animations (pulse, laser scans, terminal prompt cursors) fit the dark theme perfectly.
+
+### C. [MODIFY] [app.js](file:///c:/Users/nagar/Downloads/Accident-Detection-on-Indian-Roads-master/app.js)
+- Extend `switchView` to handle the new section navigation.
+- Implement Android App Emulator state hooks (clicking "Detect Object" takes the active canvas feed, resizes it, runs mock threshold logic, updates the thumbnail, and sets the results text).
+- Implement Python CLI command interpreter (typing or clicking run executes terminal scripts, outputs matching warning text from `run.log`, lists the newly saved file).
+- Implement Reports list generator (compiles logs from history, inputs custom notes, generates structured sheets, and opens print previews).
+- Populate more diverse analytics data to make the charts and maps look highly populated.
+
+---
+
+## 4. Verification Plan
+
+### Manual Verification
+- Check all 8 sidebar items navigate cleanly without UI jumps.
+- Verify theme switches between light and dark modes, updating background shades, text, and Leaflet map tile classes.
+- Run Python CLI Simulator: Type/run command, see output matching `run.log` and the input image processing.
+- Run Android App Simulator: Click "Detect Object", confirm the thumbnail updates, the results array lists confidences, and thresholds filter results appropriately.
+- Generate and print an incident report sheet.
+- Test adding, searching, filtering, and clearing history logs from LocalStorage.

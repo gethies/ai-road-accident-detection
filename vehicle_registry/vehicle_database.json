@@ -1,0 +1,38 @@
+[
+    {
+        "plate": "TN22AB1234",
+        "owner": "Arun Kumar",
+        "phone": "9876543210",
+        "address": "Tambaram, Chennai, Tamil Nadu",
+        "type": "Car",
+        "emergencyContact": "9123456780",
+        "status": "Verified"
+    },
+    {
+        "plate": "TN09CD5678",
+        "owner": "Priya Sharma",
+        "phone": "9876501234",
+        "address": "Velachery, Chennai, Tamil Nadu",
+        "type": "Bike",
+        "emergencyContact": "9000011111",
+        "status": "Verified"
+    },
+    {
+        "plate": "TN14EF4321",
+        "owner": "Karthik Raj",
+        "phone": "9988776655",
+        "address": "Anna Nagar, Chennai, Tamil Nadu",
+        "type": "SUV",
+        "emergencyContact": "9888899999",
+        "status": "Verified"
+    },
+    {
+        "plate": "TN01GH9876",
+        "owner": "Meena Devi",
+        "phone": "9090909090",
+        "address": "Adyar, Chennai, Tamil Nadu",
+        "type": "Sedan",
+        "emergencyContact": "9555512345",
+        "status": "Verified"
+    }
+]

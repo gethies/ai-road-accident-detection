@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --red-alert: #d9232d;
+    --night-road: #0d1117;
+    --asphalt: #1e2530;
+    --lane-yellow: #f5c842;
+    --safe-green: #22c55e;
+    --mist-white: #e8ecf0;
+    --dim-gray: #6b7280;
+  }
+
+  * {
+    @apply border-asphalt;
+  }
+
+  body {
+    @apply bg-night-road text-mist-white;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply rounded-xl border border-white/10 bg-asphalt/80 backdrop-blur-md;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-lg bg-red-alert px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lane-yellow;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-lg border border-lane-yellow/40 bg-asphalt px-4 py-2 text-sm font-semibold text-lane-yellow transition hover:border-lane-yellow hover:bg-asphalt/80;
+  }
+
+  .radar-marker {
+    @apply relative;
+  }
+
+  .radar-marker::before {
+    content: "";
+    @apply absolute inset-0 animate-radar-ping rounded-full bg-red-alert/40;
+  }
+}
+
+.leaflet-container {
+  background: #0d1117 !important;
+  font-family: var(--font-inter), sans-serif;
+}
+
+.leaflet-popup-content-wrapper {
+  @apply rounded-lg border border-white/10 bg-asphalt text-mist-white;
+}
+
+.leaflet-popup-tip {
+  @apply bg-asphalt;
+}

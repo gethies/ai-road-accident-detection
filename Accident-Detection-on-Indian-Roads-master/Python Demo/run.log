@@ -1,0 +1,13 @@
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1782149318.222601    2080 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1782149325.541676    2080 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+WARNING:tensorflow:From C:\Users\nagar\Downloads\Accident-Detection-on-Indian-Roads-master\Accident-Detection-on-Indian-Roads-master\Python Demo\classifier.py:9: The name tf.disable_v2_behavior is deprecated. Please use tf.compat.v1.disable_v2_behavior instead.
+
+WARNING:tensorflow:From C:\Users\nagar\Downloads\Accident-Detection-on-Indian-Roads-master\.venv\Lib\site-packages\tensorflow\python\compat\v2_compat.py:98: disable_resource_variables (from tensorflow.python.ops.resource_variables_toggle) is deprecated and will be removed in a future version.
+Instructions for updating:
+non-resource variables are not supported in the long term
+WARNING:tensorflow:From C:\Users\nagar\Downloads\Accident-Detection-on-Indian-Roads-master\Accident-Detection-on-Indian-Roads-master\Python Demo\object_detection\utils\label_map_util.py:131: The name tf.gfile.GFile is deprecated. Please use tf.io.gfile.GFile instead.
+
+done. Detections found: 1
+Accident score: 99.99%

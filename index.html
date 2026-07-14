@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SURE - AI Road Accident Detection & Response System</title>
+    <!-- Meta tags for SEO -->
+    <meta name="description" content="AI-Powered Incident Detection and Emergency Alert Dispatch System for Indian Roads. Reducing accident death rates from 31% to 0%.">
+    <meta name="keywords" content="accident detection, AI, deep learning, road safety, intelligent transportation, emergency response">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Leaflet.js Map CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Emergency Siren Audio -->
+    <audio id="siren-audio" src="https://actions.google.com/sounds/v1/alarms/ambulance_siren.ogg" preload="auto" style="display:none;"></audio>
+</head>
+<body>
+
+    <!-- Notification Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Main Container -->
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-triangle-exclamation pulse-red-glow"></i>
+                </div>
+                <div class="brand-text">
+                    <h2>SURE</h2>
+                    <span>AI Safety Shield</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-menu">
+                <ul>
+                    <li class="active" data-view="landing-view">
+                        <i class="fa-solid fa-house"></i>
+                        <span>Home</span>
+                    </li>
+                    <li data-view="overview-view">
+                        <i class="fa-solid fa-circle-info"></i>
+                        <span>Project Overview</span>
+                    </li>
+                    <li data-view="dataset-view">
+                        <i class="fa-solid fa-database"></i>
+                        <span>Dataset Hub</span>
+                    </li>
+                    <li data-view="architecture-view">
+                        <i class="fa-solid fa-microchip"></i>
+                        <span>Model Architecture</span>
+                    </li>
+                    <li data-view="dashboard-view">
+                        <i class="fa-solid fa-gauge-high"></i>
+                        <span>Detection Console</span>
+                    </li>
+                    <li data-view="analytics-view">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <span>Analytics Hub</span>
+                    </li>
+                    <li data-view="reports-view">
+                        <i class="fa-solid fa-file-invoice"></i>
+                        <span>Reports Center</span>
+                    </li>
+                    <li data-view="history-view">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                        <span>History Log</span>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="theme-toggle-container">
+                    <span class="theme-label"><i class="fa-solid fa-moon"></i> Dark Mode</span>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="theme-toggle-container" style="margin-top: 10px;">
+                    <span class="theme-label" style="color: #00f2fe;"><i class="fa-solid fa-magic"></i> Demo Mode</span>
+                    <label class="switch">
+                        <input type="checkbox" id="demo-mode-toggle">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="system-status">
+                    <span class="status-dot online"></span>
+                    <span class="status-text">AI Core: Online</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Body -->
+        <main class="main-content">
+            <!-- Top Header -->
+            <header class="top-header">
+                <button class="mobile-toggle" id="mobile-toggle">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <div class="header-search">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Search system logs, reports...">
+                </div>
+                <div class="header-actions">
+                    <div class="system-clock" id="system-clock">00:00:00 PM</div>
+                    <div class="notification-bell">
+                        <i class="fa-regular fa-bell"></i>
+                        <span class="badge" id="notification-count">0</span>
+                        <!-- Notification dropdown -->
+                        <div class="notification-dropdown" id="notification-dropdown">
+                            <div class="dropdown-header">
+                                <h3>Alert Notifications</h3>
+                                <button id="clear-notifications">Clear All</button>
+                            </div>
+                            <div class="dropdown-body" id="dropdown-notifications-list">
+                                <div class="empty-notifications">No new emergency alerts.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="user-profile">
+                        <div class="avatar">AI</div>
+                        <div class="user-info">
+                            <span class="name">Control Unit</span>
+                            <span class="role">Admin (Chennai)</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Views Container -->
+            <div class="content-body">
+
+                <!-- 1. LANDING VIEW -->
+                <section id="landing-view" class="view-section active">
+                    <!-- Hero Section -->
+                    <div class="hero-section">
+                        <div class="hero-content">
+                            <span class="hero-badge">AI Incident Detection</span>
+                            <h1>Reducing Road Fatalities on Indian Roads from 31% to 0%</h1>
+                            <p>An intelligent, real-time AI computer vision system designed to detect accidents immediately on traffic cameras and orchestrate instantaneous multi-agency emergency response (Ambulances, Hospitals, and Police).</p>
+                            <div class="hero-buttons">
+                                <button class="btn btn-primary" onclick="switchView('dashboard-view')">
+                                    <i class="fa-solid fa-circle-play"></i> Launch Dashboard
+                                </button>
+                                <button class="btn btn-secondary" onclick="switchView('architecture-view')">
+                                    Learn Research <i class="fa-solid fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="hero-graphics">
+                            <div class="tech-card-3d">
+                                <img src="assets/screenshot.png" alt="Accident Detection System Screen" onerror="this.src='https://placehold.co/600x400/0d0e15/ffffff?text=SURE+AI+System'">
+                                <div class="glowing-border"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- About Project Section -->
+                    <div class="about-section">
+                        <div class="section-title text-center">
+                            <h2>The Critical Problem</h2>
+                            <p>Every minute counts in saving a human life after a high-impact crash.</p>
+                        </div>
+                        <div class="stats-row">
+                            <div class="stat-card">
+                                <h3>480,652</h3>
+                                <p>Annual Road Accidents</p>
+                                <span class="stat-desc">Based on Ministry of Road Transport and Highways (MoRTH) reports.</span>
+                            </div>
+                            <div class="stat-card urgent">
+                                <h3>150,785</h3>
+                                <p>Fatalities Per Year</p>
+                                <span class="stat-desc">A staggering death ratio of 31.37% due to delayed emergency response.</span>
+                            </div>
+                            <div class="stat-card target">
+                                <h3>0%</h3>
+                                <p>Target Death Ratio</p>
+                                <span class="stat-desc">Our vision: instant alert triggering, ambulance dispatch, and hospital pre-alerting.</span>
+                            </div>
+                        </div>
+                        <div class="about-grid">
+                            <div class="about-text-panel">
+                                <h3>How AI Closes the Response Gap</h3>
+                                <p>In India, the golden hour—the first hour after a traumatic injury—is frequently lost in heavy traffic, bystander delays, and manual communication loops. By deploying computer vision at scale on highway and arterial street cameras, the SURE platform automatically detects accidents within milliseconds of impact.</p>
+                                <p>Once confirmed, the system communicates with emergency response partners: alerting the closest ambulance, notifying regional traffic police, and warning nearby hospital emergency rooms with crash data and estimated arrival times.</p>
+                            </div>
+                            <div class="about-visual-panel">
+                                <div class="process-step">
+                                    <div class="step-num">01</div>
+                                    <div class="step-content">
+                                        <h4>Computer Vision Detection</h4>
+                                        <p>TensorFlow models process surveillance camera feeds in real time to classify vehicle crashes.</p>
+                                    </div>
+                                </div>
+                                <div class="process-step">
+                                    <div class="step-num">02</div>
+                                    <div class="step-content">
+                                        <h4>Emergency Validation</h4>
+                                        <p>Results panel displays severity metrics, coordinates, and classification confidence logs.</p>
+                                    </div>
+                                </div>
+                                <div class="process-step">
+                                    <div class="step-num">03</div>
+                                    <div class="step-content">
+                                        <h4>Automated Dispatch</h4>
+                                        <p>Instant SMS, Webhook, and system pre-alerts are transmitted to rescue response teams.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Features Section -->
+                    <div class="features-section">
+                        <div class="section-title text-center">
+                            <h2>Key Features of the System</h2>
+                            <p>Cutting-edge features built to safeguard citizens and streamline traffic monitoring.</p>
+                        </div>
+                        <div class="features-grid">
+                            <div class="feature-card">
+                                <div class="feature-icon"><i class="fa-solid fa-eye"></i></div>
+                                <h3>Indian Road Optimization</h3>
+                                <p>Custom-trained model optimized for chaotic traffic, weather variations, and infrastructure conditions in Indian metropolises.</p>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-icon"><i class="fa-solid fa-video"></i></div>
+                                <h3>Multi-Channel Monitoring</h3>
+                                <p>Processes video uploads, images, and live CCTV feeds from cameras, switching interfaces dynamically.</p>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-icon"><i class="fa-solid fa-truck-medical"></i></div>
+                                <h3>Tri-Agency Alerting</h3>
+                                <p>Simultaneous dispatch console updates ambulance dispatch centers, local police divisions, and hospital trauma units.</p>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-icon"><i class="fa-solid fa-map-location-dot"></i></div>
+                                <h3>Hotspot Analytics</h3>
+                                <p>Aggregates historical data to identify critical crash zones, aiding urban planners in engineering safer intersections.</p>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-icon"><i class="fa-solid fa-user-shield"></i></div>
+                                <h3>Local Storage Integrity</h3>
+                                <p>Maintains persistent local logs of all detections, scores, and actions to ensure audit trails remain intact.</p>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-icon"><i class="fa-solid fa-sliders"></i></div>
+                                <h3>Customizable Thresholds</h3>
+                                <p>Allows operators to scale AI confidence thresholds (e.g. 60%) to balance sensitivity and false-alarm frequency.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Technology Stack Section -->
+                    <div class="tech-stack-section">
+                        <div class="section-title text-center">
+                            <h2>Project Technology Stack</h2>
+                            <p>High-performance backend and mobile framework powering the SURE system.</p>
+                        </div>
+                        <div class="tech-logos-grid">
+                            <div class="tech-logo-card">
+                                <i class="fa-brands fa-python python-color"></i>
+                                <h4>Python Core</h4>
+                                <p>Object classification scripts</p>
+                            </div>
+                            <div class="tech-logo-card">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2d/Tensorflow_logo.svg" alt="Tensorflow" class="svg-logo">
+                                <h4>TensorFlow</h4>
+                                <p>Object Detection API Graph</p>
+                            </div>
+                            <div class="tech-logo-card">
+                                <i class="fa-brands fa-android android-color"></i>
+                                <h4>Android App</h4>
+                                <p>Mobile camera detection client</p>
+                            </div>
+                            <div class="tech-logo-card">
+                                <i class="fa-solid fa-server nodejs-color"></i>
+                                <h4>Flask Server</h4>
+                                <p>API Gateway Integration</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Team Section -->
+                    <div class="team-section">
+                        <div class="section-title text-center">
+                            <h2>Project Team</h2>
+                            <p>Developers & Research Engineers pioneering intelligent transport safety systems.</p>
+                        </div>
+                        <div class="team-grid">
+                            <div class="team-card">
+                                <div class="member-avatar"><i class="fa-solid fa-user-astronaut"></i></div>
+                                <h3>Rohan Sharma</h3>
+                                <p>AI Research & Model Training</p>
+                            </div>
+                            <div class="team-card">
+                                <div class="member-avatar"><i class="fa-solid fa-user-tie"></i></div>
+                                <h3>Priya Patel</h3>
+                                <p>Android Client Development</p>
+                            </div>
+                            <div class="team-card">
+                                <div class="member-avatar"><i class="fa-solid fa-user-ninja"></i></div>
+                                <h3>Aarav Mehta</h3>
+                                <p>Emergency Integration Architect</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Section -->
+                    <div class="contact-section">
+                        <div class="contact-card glass-panel">
+                            <h3>Integrate SURE in Your City</h3>
+                            <p>Contact us to connect municipal CCTV cameras or deploy mobile vehicle safety apps.</p>
+                            <form id="contact-form" class="contact-form" onsubmit="event.preventDefault(); alert('Demo Message Sent! Thank you.'); this.reset();">
+                                <div class="form-row">
+                                    <input type="text" placeholder="Your Name" required>
+                                    <input type="email" placeholder="Email Address" required>
+                                </div>
+                                <input type="text" placeholder="Organization / Municipal Authority" required>
+                                <textarea placeholder="Message Description" rows="4" required></textarea>
+                                <button type="submit" class="btn btn-primary">Send Inquiry</button>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+
+                <!-- 2. DETECTION DASHBOARD VIEW -->
+                <section id="dashboard-view" class="view-section">
+                    <div class="dashboard-grid">
+                        
+                        <!-- Left Panel: Video/Image Feed Source -->
+                        <div class="panel-left">
+                            <!-- Console Mode Selector -->
+                            <div class="console-mode-selector" style="margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                                <button class="btn btn-secondary active" id="mode-cctv-btn" style="font-size: 0.8rem; padding: 8px;">
+                                    <i class="fa-solid fa-server"></i> CCTV Grid
+                                </button>
+                                <button class="btn btn-secondary" id="mode-android-btn" style="font-size: 0.8rem; padding: 8px;">
+                                    <i class="fa-brands fa-android"></i> Android Client
+                                </button>
+                                <button class="btn btn-secondary" id="mode-python-btn" style="font-size: 0.8rem; padding: 8px;">
+                                    <i class="fa-solid fa-terminal"></i> Python Script
+                                </button>
+                            </div>
+
+                            <!-- 1. CCTV GRID NETWORK MONITOR -->
+                            <div id="console-cctv-container" class="console-container active">
+                                <!-- Source Selector Tabs -->
+                                <div class="source-tabs">
+                                    <button class="tab-btn active" data-tab="upload-image">
+                                        <i class="fa-solid fa-image"></i> Image Upload
+                                    </button>
+                                    <button class="tab-btn" data-tab="upload-video">
+                                        <i class="fa-solid fa-video"></i> Video Upload
+                                    </button>
+                                    <button class="tab-btn" data-tab="live-camera">
+                                        <i class="fa-solid fa-camera"></i> Live CCTV
+                                    </button>
+                                    <button class="tab-btn" data-tab="cctv-grid">
+                                        <i class="fa-solid fa-border-all"></i> CCTV Grid
+                                    </button>
+                                </div>
+
+                                <!-- Image Upload Tab Container -->
+                                <div id="tab-upload-image" class="tab-content active">
+                                    <div class="upload-dropzone" id="image-dropzone">
+                                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                                        <h3>Drag & Drop Image Here</h3>
+                                        <p>Supports JPG, JPEG, PNG (Max 10MB)</p>
+                                        <button class="btn btn-secondary btn-sm" onclick="document.getElementById('image-input').click()">Browse Files</button>
+                                        <input type="file" id="image-input" accept="image/*" style="display:none">
+                                        <span class="or-separator">or</span>
+                                        <button class="btn btn-accent btn-sm" id="load-sample-btn">
+                                            <i class="fa-solid fa-circle-info"></i> Load Sample Indian Road Image
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Video Upload Tab Container -->
+                                <div id="tab-upload-video" class="tab-content">
+                                    <div class="upload-dropzone" id="video-dropzone">
+                                        <i class="fa-solid fa-file-video"></i>
+                                        <h3>Drag & Drop Traffic Video</h3>
+                                        <p>Supports MP4, AVI, MOV (Max 50MB)</p>
+                                        <button class="btn btn-secondary btn-sm" onclick="document.getElementById('video-input').click()">Browse Videos</button>
+                                        <input type="file" id="video-input" accept="video/*" style="display:none">
+                                        <span class="or-separator">or</span>
+                                        <button class="btn btn-accent btn-sm" id="load-sample-video-btn">
+                                            <i class="fa-solid fa-circle-play"></i> Load Sample Traffic Feed
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Live Camera Tab Container -->
+                                <div id="tab-live-camera" class="tab-content">
+                                    <div class="camera-activation-panel">
+                                        <i class="fa-solid fa-satellite-dish"></i>
+                                        <h3>Live CCTV Stream Connected</h3>
+                                        <p>Monitoring critical highway node for accidents.</p>
+                                        <div class="camera-buttons">
+                                            <button class="btn btn-accent" id="start-simulated-camera-btn">
+                                                <i class="fa-solid fa-play"></i> View Live Stream
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- CCTV Grid Tab Container -->
+                                <div id="tab-cctv-grid" class="tab-content">
+                                    <div class="cctv-grid-network" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
+                                        <div class="cctv-feed" style="position: relative; border-radius: 8px; overflow: hidden; border: 2px solid #334155; height: 180px; background: #000;">
+                                            <video src="assets/sample-videos/highway_accident.mp4" loop muted autoplay playsinline preload="auto" style="width:100%; height:100%; object-fit:cover; opacity: 0.8;"></video>
+                                            <span style="position:absolute; top:5px; left:5px; background:rgba(0,0,0,0.7); color:#00f2fe; padding:2px 8px; font-size:0.7rem; border-radius:4px;"><span class="pulse-dot" style="background:#ff3333; display:inline-block; width:6px; height:6px; border-radius:50%; margin-right:4px;"></span>LIVE | CAM-01</span>
+                                            <span style="position:absolute; bottom:5px; right:5px; background:rgba(0,0,0,0.7); color:#fff; padding:2px 8px; font-size:0.7rem; border-radius:4px;" class="grid-timestamp">00:00:00</span>
+                                        </div>
+                                        <div class="cctv-feed" style="position: relative; border-radius: 8px; overflow: hidden; border: 2px solid #334155; height: 180px; background: #000;">
+                                            <video src="assets/sample-videos/traffic_collision.mp4" loop muted autoplay playsinline preload="auto" style="width:100%; height:100%; object-fit:cover; opacity: 0.8;"></video>
+                                            <span style="position:absolute; top:5px; left:5px; background:rgba(0,0,0,0.7); color:#00f2fe; padding:2px 8px; font-size:0.7rem; border-radius:4px;"><span class="pulse-dot" style="background:#ff3333; display:inline-block; width:6px; height:6px; border-radius:50%; margin-right:4px;"></span>LIVE | CAM-02</span>
+                                            <span style="position:absolute; bottom:5px; right:5px; background:rgba(0,0,0,0.7); color:#fff; padding:2px 8px; font-size:0.7rem; border-radius:4px;" class="grid-timestamp">00:00:00</span>
+                                        </div>
+                                        <div class="cctv-feed" style="position: relative; border-radius: 8px; overflow: hidden; border: 2px solid #334155; height: 180px; background: #000;">
+                                            <video src="assets/sample-videos/bike_accident.mp4" loop muted autoplay playsinline preload="auto" style="width:100%; height:100%; object-fit:cover; opacity: 0.8;"></video>
+                                            <span style="position:absolute; top:5px; left:5px; background:rgba(0,0,0,0.7); color:#00f2fe; padding:2px 8px; font-size:0.7rem; border-radius:4px;"><span class="pulse-dot" style="background:#ff3333; display:inline-block; width:6px; height:6px; border-radius:50%; margin-right:4px;"></span>LIVE | CAM-03</span>
+                                            <span style="position:absolute; bottom:5px; right:5px; background:rgba(0,0,0,0.7); color:#fff; padding:2px 8px; font-size:0.7rem; border-radius:4px;" class="grid-timestamp">00:00:00</span>
+                                        </div>
+                                        <div class="cctv-feed" style="position: relative; border-radius: 8px; overflow: hidden; border: 2px solid #334155; height: 180px; background: #000;">
+                                            <video src="assets/sample-videos/normal_traffic.mp4" loop muted autoplay playsinline preload="auto" style="width:100%; height:100%; object-fit:cover; opacity: 0.8;"></video>
+                                            <span style="position:absolute; top:5px; left:5px; background:rgba(0,0,0,0.7); color:#00f2fe; padding:2px 8px; font-size:0.7rem; border-radius:4px;"><span class="pulse-dot" style="background:#ff3333; display:inline-block; width:6px; height:6px; border-radius:50%; margin-right:4px;"></span>LIVE | CAM-04</span>
+                                            <span style="position:absolute; bottom:5px; right:5px; background:rgba(0,0,0,0.7); color:#fff; padding:2px 8px; font-size:0.7rem; border-radius:4px;" class="grid-timestamp">00:00:00</span>
+                                        </div>
+                                    </div>
+                                    <div style="text-align:center; margin-top:15px;">
+                                        <p style="font-size:0.8rem; color:#94a3b8;"><i class="fa-solid fa-video"></i> Live monitoring active</p>
+                                    </div>
+                                </div>
+
+                                <!-- Visual Display Screen (Processed Output) -->
+                                <div class="visual-monitor-card glass-panel" id="monitor-container" style="display:none">
+                                    <div class="monitor-header">
+                                        <span class="feed-tag"><span class="pulse-dot"></span> FEED: <span id="feed-source-name">Chennai CCTV Live - Mount Road</span></span>
+                                        <button class="btn-icon" id="close-monitor-btn"><i class="fa-solid fa-xmark"></i></button>
+                                    </div>
+                                    <div class="monitor-screen-wrapper">
+                                        <!-- Dynamic elements go here -->
+                                        <img id="monitor-image" class="monitor-image" src="" alt="Processed feed">
+                                        <video id="monitor-video" class="monitor-video" loop muted playsinline src=""></video>
+                                        <canvas id="monitor-canvas" class="monitor-canvas"></canvas>
+                                        
+                                        <!-- Scanning laser effect -->
+                                        <div class="scanner-laser" id="scanner-laser"></div>
+                                        <!-- Processing overlay -->
+                                        <div class="processing-overlay" id="processing-overlay">
+                                            <div class="spinner"></div>
+                                            <p>Running AI Object Classifier...</p>
+                                            <div class="progress-bar-container">
+                                                <div class="progress-bar-fill" id="progress-bar-fill"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="monitor-footer">
+                                        <button class="btn btn-danger" id="run-detection-btn">
+                                            <i class="fa-solid fa-bolt"></i> Run AI Incident Classifier
+                                        </button>
+                                        <div class="confidence-threshold-picker">
+                                            <label for="threshold-slider">Confidence Cutoff: <span id="threshold-val">60%</span></label>
+                                            <input type="range" id="threshold-slider" min="30" max="95" value="60">
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- NEW: Simulation Control Panel (Moved inside monitor for visibility) -->
+                                    <div class="simulation-control-panel" id="simulation-control-panel" style="margin: 15px; padding: 15px; background: rgba(0,0,0,0.6); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); display:none;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                            <h4 style="margin: 0; color: #00f2fe;"><i class="fa-solid fa-traffic-light"></i> Simulation Engine</h4>
+                                            <select id="simulation-scenario-select" class="form-select" style="width: 200px;">
+                                                <option value="minor">Minor Accident</option>
+                                                <option value="major" selected>Major Collision</option>
+                                                <option value="truck">Truck Accident</option>
+                                                <option value="multi">Multi-Vehicle Crash</option>
+                                            </select>
+                                        </div>
+                                        <div class="simulation-buttons" style="display: flex; gap: 10px;">
+                                            <button class="btn btn-primary btn-sm" id="sim-start-feed-btn" style="flex: 1;">
+                                                <i class="fa-solid fa-play"></i> Start Live Feed
+                                            </button>
+                                            <button class="btn btn-danger btn-sm" id="sim-trigger-accident-btn" style="flex: 1;" disabled>
+                                                <i class="fa-solid fa-burst"></i> Trigger Accident
+                                            </button>
+                                            <button class="btn btn-secondary btn-sm" id="sim-reset-feed-btn" style="flex: 1;">
+                                                <i class="fa-solid fa-rotate-right"></i> Reset Feed
+                                            </button>
+                                            <button class="btn btn-accent btn-sm" id="sim-generate-new-btn" style="flex: 1;">
+                                                <i class="fa-solid fa-shuffle"></i> New Scenario
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 2. ANDROID CLIENT MOBILE EMULATOR -->
+                            <div id="console-android-container" class="console-container" style="display:none;">
+                                <div class="smartphone-emulator" style="margin: 0 auto; max-width: 320px; border: 12px solid #161925; border-radius: 36px; padding: 15px; background: #0c0d12; box-shadow: var(--glass-shadow); position: relative;">
+                                    <div class="phone-notch" style="width: 140px; height: 18px; background: #161925; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; position: absolute; top: 0; left: 50%; transform: translateX(-50%); z-index: 10;"></div>
+                                    
+                                    <div class="phone-screen-body" style="background: #f1f5f9; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column; height: 480px; font-family: sans-serif; color: #000; position: relative;">
+                                        <!-- Android CameraView (300x300 container) -->
+                                        <div class="phone-camera-view-port" style="height: 250px; background: #000; display: flex; align-items: center; justify-content: center; position: relative;">
+                                            <video id="phone-stream-video" loop muted playsinline preload="auto" style="width:100%; height:100%; object-fit:cover; display:none;"></video>
+                                            <img id="phone-stream-image" style="width:100%; height:100%; object-fit:cover; display:none;">
+                                            <canvas id="phone-canvas" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index: 5;"></canvas>
+                                            <div id="phone-camera-empty" style="color: #64748b; font-size: 0.8rem; text-align: center; padding: 20px;">
+                                                <i class="fa-solid fa-camera" style="font-size: 2.5rem; color: #334155; margin-bottom: 10px; display:block; margin-left:auto; margin-right:auto;"></i>
+                                                <span>Android Camera Preview (300x300)</span>
+                                                <div style="margin-top: 15px; display: flex; flex-direction: column; gap: 8px; align-items: center;">
+                                                    <button class="btn btn-secondary btn-sm" id="phone-load-sample-btn" style="background:#334155; color:#fff; border:none; padding:4px 8px; font-size:0.7rem;">Load Sample Feed</button>
+                                                    <button class="btn btn-secondary btn-sm" id="phone-access-cam-btn" style="background:#475569; color:#fff; border:none; padding:4px 8px; font-size:0.7rem;">Access Device Cam</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Result layout from activity_main.xml (75x75 ImageView and TextView) -->
+                                        <div class="phone-results-layout" style="display: flex; gap: 10px; padding: 10px; height: 100px; background: #ffffff; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; align-items: center;">
+                                            <div class="phone-thumbnail-wrapper" style="width: 75px; height: 75px; background: #e2e8f0; border-radius: 6px; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                                <img id="phone-thumbnail" src="" alt="75x75 scaled preview" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                                                <span id="phone-thumbnail-empty" style="font-size: 0.6rem; color: #94a3b8; text-align: center;">75x75 bitmap</span>
+                                            </div>
+                                            <div id="phone-text-results" style="font-family: monospace; font-size: 0.7rem; color: #000; overflow-y: auto; height: 80px; flex-grow: 1; padding: 5px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px;">
+                                                No results loaded
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Actions bar -->
+                                        <div class="phone-actions-footer" style="padding: 10px; background: #f8fafc; display: flex; flex-direction: column; gap: 10px; flex-grow: 1; justify-content: center;">
+                                            <button class="btn btn-block" id="phone-detect-btn" style="background: #3b82f6; color: white; font-weight: 600; padding: 8px; font-size: 0.8rem; border-radius: 6px; text-transform: none; border:none;" disabled>
+                                                Detect Object
+                                            </button>
+                                            
+                                            <!-- Calibration slider representing THRESHOLD = 0.6f parameter -->
+                                            <div style="font-size: 0.7rem; display: flex; align-items: center; justify-content: space-between;">
+                                                <label for="phone-threshold-slider">Confidence Threshold (THRESHOLD): <strong id="phone-threshold-val">60%</strong></label>
+                                                <input type="range" id="phone-threshold-slider" min="30" max="95" value="60" style="width: 100px;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 3. PYTHON SCRIPT CLI TERMINAL -->
+                            <div id="console-python-container" class="console-container" style="display:none;">
+                                <div class="terminal-emulator" style="background: #090b10; border-radius: 8px; border: 1px solid var(--border-color); overflow: hidden; box-shadow: var(--glass-shadow); font-family: 'Courier New', Courier, monospace;">
+                                    <div class="terminal-header" style="background: #121620; padding: 8px 15px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-color);">
+                                        <div style="display: flex; gap: 6px;">
+                                            <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #ff5f56;"></span>
+                                            <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #ffbd2e;"></span>
+                                            <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #27c93f;"></span>
+                                        </div>
+                                        <span style="font-size: 0.75rem; color: var(--text-muted);">nagar@sure-node: ~/python-demo</span>
+                                        <div style="width: 38px;"></div>
+                                    </div>
+                                    <div class="terminal-body" style="padding: 15px; min-height: 250px; overflow-y: auto; font-size: 0.75rem; color: #a6accd; line-height: 1.5; text-align: left;">
+                                        <div><span style="color: #27c93f;">nagar@sure-node:~/python-demo$</span> <span id="terminal-cmd-display" style="color: #fff;"></span><span class="terminal-cursor" style="display: inline-block; width: 8px; height: 15px; background: #fff; vertical-align: middle; animation: blink 1s step-end infinite; margin-left: 2px;"></span></div>
+                                        
+                                        <div id="terminal-execution-log" style="display: none; margin-top: 10px; color: #89ddff;">
+                                            WARNING: All log messages before absl::InitializeLog() is called are written to STDERR<br>
+                                            <span style="color: #475569;">I0000 00:00:1782149318.222601    2080 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results...</span><br>
+                                            <span style="color: #ffb300;">WARNING:tensorflow:From classifier.py:9: The name tf.disable_v2_behavior is deprecated. Please use tf.compat.v1.disable_v2_behavior instead.</span><br>
+                                            <span style="color: #ffb300;">WARNING:tensorflow:From object_detection/utils/label_map_util.py:131: The name tf.gfile.GFile is deprecated. Please use tf.io.gfile.GFile instead.</span><br>
+                                            <br>
+                                            <span style="color: #00e676; font-weight: bold;">done. Detections found: 1</span><br>
+                                            <span style="color: #00e676; font-weight: bold;">Accident score: 99.99%</span>
+                                        </div>
+                                    </div>
+                                    <div class="terminal-footer" style="padding: 10px 15px; background: #0c0e15; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                                        <button class="btn btn-primary btn-sm" id="terminal-run-btn">
+                                            <i class="fa-solid fa-play"></i> Run Script
+                                        </button>
+                                        <button class="btn btn-secondary btn-sm" id="terminal-clear-btn">
+                                            Clear Shell
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="directory-viewer glass-panel" style="margin-top: 15px; padding: 15px; text-align: left;">
+                                    <h4 style="font-size: 0.85rem; font-weight: 700; margin-bottom: 10px;"><i class="fa-regular fa-folder-open text-warning"></i> Python Demo Workspace Directory</h4>
+                                    <ul style="font-family: monospace; font-size: 0.75rem; display: flex; flex-direction: column; gap: 8px; color: var(--text-secondary);">
+                                        <li><i class="fa-solid fa-folder text-warning"></i> graph/ <span style="color:var(--text-muted); font-size:0.65rem;">(frozen_inference_graph.pb, pipeline.config)</span></li>
+                                        <li><i class="fa-solid fa-folder text-warning"></i> object_detection/ <span style="color:var(--text-muted); font-size:0.65rem;">(utils/visualization_utils.py)</span></li>
+                                        <li><i class="fa-solid fa-file-code style-code-color" style="color: #00b0ff;"></i> classifier.py <span style="color:var(--text-muted); font-size:0.65rem;">(execution script)</span></li>
+                                        <li><i class="fa-solid fa-file-lines" style="color: #94a3b8;"></i> accidents.pbtxt <span style="color:var(--text-muted); font-size:0.65rem;">(labels database)</span></li>
+                                        <li style="display: flex; justify-content: space-between; align-items: center;">
+                                            <span><i class="fa-solid fa-file-image" style="color:#7f00ff;"></i> input.jpg <span style="color:var(--text-muted); font-size:0.65rem;">(image file input)</span></span>
+                                            <button class="btn btn-secondary btn-sm" id="cli-load-input-btn" style="padding:2px 6px; font-size:0.6rem;">Load File</button>
+                                        </li>
+                                        <li id="cli-output-item" style="display: none; justify-content: space-between; align-items: center; background: rgba(0, 230, 118, 0.04); padding: 4px; border-radius: 4px; border: 1px dashed var(--color-success);">
+                                            <span><i class="fa-solid fa-file-image" style="color:#00e676;"></i> output.jpg <span style="color:var(--text-muted); font-size:0.65rem;">(labeled output)</span></span>
+                                            <button class="btn btn-accent btn-sm" id="cli-view-output-btn" style="padding:2px 6px; font-size:0.6rem;">View Output</button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Panel: Results & Multi-Agency Dispatches -->
+                        <div class="panel-right">
+                            <!-- Detection Results Panel -->
+                            <div class="card glass-panel detection-results-card" id="results-panel">
+                                <div class="card-header border-bottom">
+                                    <h3><i class="fa-solid fa-brain"></i> Detection Result Panel</h3>
+                                    <span class="badge badge-secondary" id="detection-time">No active feed</span>
+                                </div>
+                                <div class="card-body">
+                                    <div class="result-status-block safe" id="result-status-block">
+                                        <i class="fa-solid fa-circle-check" id="status-icon"></i>
+                                        <h2 id="status-text">NO INCIDENT DETECTED</h2>
+                                        <p id="status-description">System monitoring. Ready for traffic analysis.</p>
+                                    </div>
+
+                                    <div class="metrics-grid">
+                                        <div class="metric-box">
+                                            <span class="label">Accident Class</span>
+                                            <span class="value" id="res-class">N/A</span>
+                                        </div>
+                                        <div class="metric-box">
+                                            <span class="label">Confidence Score</span>
+                                            <span class="value" id="res-confidence">--</span>
+                                            <div class="score-progress-bar">
+                                                <div class="score-progress-fill" id="res-confidence-bar"></div>
+                                            </div>
+                                        </div>
+                                        <div class="metric-box">
+                                            <span class="label">Severity Level</span>
+                                            <span class="value" id="res-severity">--</span>
+                                        </div>
+                                        <div class="metric-box">
+                                            <span class="label">Incident Location</span>
+                                            <span class="value" id="res-location">--</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Emergency Alert Dashboard -->
+                            <div class="card glass-panel emergency-alert-card disabled" id="alerts-panel">
+                                <div class="card-header border-bottom">
+                                    <h3><i class="fa-solid fa-triangle-exclamation text-danger"></i> Emergency Alert Console</h3>
+                                    <span class="pulse-red-glow badge badge-danger">LOCKED - NO INCIDENT</span>
+                                </div>
+                                <div class="card-body alerts-grid">
+                                    <!-- Ambulance dispatch panel -->
+                                    <div class="dispatch-panel glass-panel border-warning" id="dispatch-ambulance">
+                                        <div class="dispatch-header">
+                                            <i class="fa-solid fa-truck-medical text-warning"></i>
+                                            <div>
+                                                <h4>Ambulance Services</h4>
+                                                <span class="dispatch-subtitle">108 Emergency Medical</span>
+                                            </div>
+                                        </div>
+                                        <div class="dispatch-body">
+                                            <div class="info-row">
+                                                <span>Status:</span>
+                                                <span class="badge badge-secondary dispatch-status">Idle</span>
+                                            </div>
+                                            <div class="info-row">
+                                                <span>Nearest Unit:</span>
+                                                <span class="dispatch-nearest">Sector 4 Depot (2.4 km)</span>
+                                            </div>
+                                            <div class="info-row">
+                                                <span>Estimated ETA:</span>
+                                                <span class="dispatch-eta">-- mins</span>
+                                            </div>
+                                        </div>
+                                        <button class="btn btn-warning btn-block dispatch-btn" disabled>
+                                            <i class="fa-solid fa-paper-plane"></i> Dispatch Ambulance
+                                        </button>
+                                    </div>
+
+                                    <!-- Police dispatch panel -->
+                                    <div class="dispatch-panel glass-panel border-info" id="dispatch-police">
+                                        <div class="dispatch-header">
+                                            <i class="fa-solid fa-shield-halved text-info"></i>
+                                            <div>
+                                                <h4>Traffic Police Command</h4>
+                                                <span class="dispatch-subtitle">100 Control Room</span>
+                                            </div>
+                                        </div>
+                                        <div class="dispatch-body">
+                                            <div class="info-row">
+                                                <span>Status:</span>
+                                                <span class="badge badge-secondary dispatch-status">Idle</span>
+                                            </div>
+                                            <div class="info-row">
+                                                <span>Nearest Station:</span>
+                                                <span class="dispatch-nearest">Adyar Traffic Station</span>
+                                            </div>
+                                            <div class="info-row">
+                                                <span>Patrol Vehicle:</span>
+                                                <span class="dispatch-eta">-- mins</span>
+                                            </div>
+                                        </div>
+                                        <button class="btn btn-info btn-block dispatch-btn" disabled>
+                                            <i class="fa-solid fa-paper-plane"></i> Dispatch Police Unit
+                                        </button>
+                                    </div>
+
+                                    <!-- Hospital Alert Panel -->
+                                    <div class="dispatch-panel glass-panel border-danger" id="dispatch-hospital">
+                                        <div class="dispatch-header">
+                                            <i class="fa-solid fa-hospital text-danger"></i>
+                                            <div>
+                                                <h4>Trauma Care Unit</h4>
+                                                <span class="dispatch-subtitle">Fortis Malar Emergency</span>
+                                            </div>
+                                        </div>
+                                        <div class="dispatch-body">
+                                            <div class="info-row">
+                                                <span>Status:</span>
+                                                <span class="badge badge-secondary dispatch-status">Idle</span>
+                                            </div>
+                                            <div class="info-row">
+                                                <span>Available Beds:</span>
+                                                <span class="dispatch-nearest">4 ICU Beds Open</span>
+                                            </div>
+                                            <div class="info-row">
+                                                <span>Pre-Alert Status:</span>
+                                                <span class="dispatch-eta">Idle</span>
+                                            </div>
+                                        </div>
+                                        <button class="btn btn-danger btn-block dispatch-btn" disabled>
+                                            <i class="fa-solid fa-bell"></i> Send Trauma Pre-Alert
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+
+                <!-- 3. ANALYTICS & MAP VIEW -->
+                <section id="analytics-view" class="view-section">
+                    <!-- Analytics Counters -->
+                    <div class="analytics-counters">
+                        <div class="counter-card glass-panel">
+                            <div class="counter-icon bg-blue"><i class="fa-solid fa-video"></i></div>
+                            <div class="counter-text">
+                                <h3 id="counter-monitored">1,424</h3>
+                                <p>CCTV Hours Audited</p>
+                            </div>
+                        </div>
+                        <div class="counter-card glass-panel">
+                            <div class="counter-icon bg-yellow"><i class="fa-solid fa-skull-crossbones"></i></div>
+                            <div class="counter-text">
+                                <h3 id="counter-incidents">352</h3>
+                                <p>Accidents Flagged</p>
+                            </div>
+                        </div>
+                        <div class="counter-card glass-panel">
+                            <div class="counter-icon bg-green"><i class="fa-solid fa-heart-pulse"></i></div>
+                            <div class="counter-text">
+                                <h3 id="counter-lives">348</h3>
+                                <p>Saved Lives</p>
+                            </div>
+                        </div>
+                        <div class="counter-card glass-panel">
+                            <div class="counter-icon bg-red"><i class="fa-solid fa-truck-ramp-box"></i></div>
+                            <div class="counter-text">
+                                <h3 id="counter-time">7.8m</h3>
+                                <p>Avg Emergency Response</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Map and Graphs Grid -->
+                    <div class="analytics-grid">
+                        <!-- Accident Hotspot Map Card -->
+                        <div class="card glass-panel map-card">
+                            <div class="card-header border-bottom">
+                                <h3><i class="fa-solid fa-map-location-dot"></i> Accident Hotspots Map (Chennai Zone)</h3>
+                                <span class="badge badge-primary">Live GIS Layers</span>
+                            </div>
+                            <div class="card-body">
+                                <div id="hotspot-map" class="hotspot-map-container"></div>
+                            </div>
+                        </div>
+
+                        <!-- Statistics Column -->
+                        <div class="analytics-charts-column">
+                            <!-- Monthly Trend -->
+                            <div class="card glass-panel chart-card">
+                                <div class="card-header border-bottom">
+                                    <h3><i class="fa-solid fa-chart-area"></i> Monthly Accident Detection Trends</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="chart-container">
+                                        <canvas id="trend-chart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Severity & Distribution -->
+                            <div class="card glass-panel chart-card">
+                                <div class="card-header border-bottom">
+                                    <h3><i class="fa-solid fa-chart-pie"></i> Incident Severity & Class Distribution</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="chart-container">
+                                        <canvas id="severity-chart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- AI Performance Metrics -->
+                            <div class="card glass-panel performance-metrics-card">
+                                <div class="card-header border-bottom">
+                                    <h3><i class="fa-solid fa-sliders"></i> AI Model Performance Metrics</h3>
+                                    <span class="badge badge-success">VGG16-SSD v2</span>
+                                </div>
+                                <div class="card-body metrics-summary-grid">
+                                    <div class="metric-perf-box">
+                                        <span class="percent">94.2%</span>
+                                        <span class="label">mAP (Mean Avg Precision)</span>
+                                    </div>
+                                    <div class="metric-perf-box">
+                                        <span class="percent">92.6%</span>
+                                        <span class="label">Detection Sensitivity</span>
+                                    </div>
+                                    <div class="metric-perf-box">
+                                        <span class="percent">85ms</span>
+                                        <span class="label">Inference Latency</span>
+                                    </div>
+                                    <div class="metric-perf-box">
+                                        <span class="percent">99.8%</span>
+                                        <span class="label">System Uptime</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+
+                <!-- 4. HISTORY LOG VIEW -->
+                <section id="history-view" class="view-section">
+                    <div class="card glass-panel history-table-card">
+                        <div class="card-header border-bottom flex-between flex-wrap gap-15">
+                            <div class="table-header-left">
+                                <h3><i class="fa-solid fa-list-check"></i> System Detection Logs</h3>
+                                <p>View, filter, and export incident details saved in Local Storage.</p>
+                            </div>
+                            <div class="table-header-right flex-gap-10">
+                                <input type="text" id="history-search" class="form-input search-input" placeholder="Search by location, severity...">
+                                <select id="history-filter-severity" class="form-select select-input">
+                                    <option value="ALL">All Severities</option>
+                                    <option value="HIGH">High Severity</option>
+                                    <option value="MEDIUM">Medium Severity</option>
+                                    <option value="LOW">Low Severity</option>
+                                </select>
+                                <button class="btn btn-secondary btn-icon-text" id="clear-history-btn">
+                                    <i class="fa-solid fa-trash-can"></i> Clear Log
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-wrapper">
+                                <table class="history-table" id="history-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Timestamp</th>
+                                            <th>Feed Source</th>
+                                            <th>Accident Status</th>
+                                            <th>Confidence</th>
+                                            <th>Severity</th>
+                                            <th>Location</th>
+                                            <th>Emergency Dispatch</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="history-table-body">
+                                        <!-- Javascript fills this -->
+                                        <tr class="empty-row">
+                                            <td colspan="8">No detections stored in history database.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+
+                <!-- 5. PROJECT OVERVIEW VIEW -->
+                <section id="overview-view" class="view-section">
+                    <!-- Sub-tabs for Research view -->
+                    <div class="source-tabs" style="margin-bottom: 25px;">
+                        <button class="research-tab-btn active" data-research-tab="res-overview">
+                            <i class="fa-solid fa-graduation-cap"></i> Project Overview
+                        </button>
+                        <button class="research-tab-btn" data-research-tab="res-code">
+                            <i class="fa-solid fa-code"></i> classifier.py Source
+                        </button>
+                        <button class="research-tab-btn" data-research-tab="res-logs">
+                            <i class="fa-solid fa-terminal"></i> Model Run Log
+                        </button>
+                        <button class="research-tab-btn" data-research-tab="res-license">
+                            <i class="fa-solid fa-file-shield"></i> GPL Project License
+                        </button>
+                    </div>
+
+                    <div class="research-grid">
+                        <div class="research-main-panel">
+                            <!-- Tab Content: Overview -->
+                            <div id="research-tab-res-overview" class="research-tab-content active">
+                                <div class="glass-panel p-20" style="margin-bottom: 20px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                                        <h2 style="margin: 0;">Academic Project Overview</h2>
+                                        <div class="ai-voice-controls" style="display: flex; gap: 10px;">
+                                            <button class="btn btn-accent btn-sm" id="voice-overview-en-btn">
+                                                <i class="fa-solid fa-volume-high"></i> AI Voice (English)
+                                            </button>
+                                            <button class="btn btn-accent btn-sm" id="voice-overview-ta-btn">
+                                                <i class="fa-solid fa-language"></i> AI Voice (Tamil)
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <p class="lead" style="margin-top: 15px;">The core algorithm operates on the TensorFlow Object Detection framework, incorporating transfer learning to detect road crashes under challenging road and lighting conditions.</p>
+                                    
+                                    <hr class="view-divider" style="border: none; border-top: 1px solid var(--border-color); margin: 20px 0;">
+
+                                    <h3>Problem Formulation & Relevance</h3>
+                                    <p style="margin-top: 10px; line-height: 1.6; font-size: 0.9rem;">According to research issued by the Transport Research Wing, road accidents claim over 150,000 lives annually in India. Over 31% of these fatalities are attributed to delays in medical intervention. The SURE framework attempts to tackle this problem by automating the detection process and connecting CCTV camera grids directly to dispatch agencies, skipping manual calling queues.</p>
+                                    
+                                    <h3 style="margin-top: 20px;">Surveillance Grid Orchestration</h3>
+                                    <p style="margin-top: 10px; line-height: 1.6; font-size: 0.9rem;">By deploying deep learning at scale on municipal highway cameras, SURE detects accidents within milliseconds of impact. Once confirmed, the system communicates with emergency response partners: alerting the closest 108 ambulance, notifying regional traffic police, and warning nearby hospital trauma rooms with crash data and estimated arrival times.</p>
+                                    
+                                    <h3 style="margin-top: 20px;">Indian Road Optimization Challenges</h3>
+                                    <p style="margin-top: 10px; line-height: 1.6; font-size: 0.9rem;">Typical models trained on Western datasets perform poorly under Indian road conditions due to high vehicle density, mixed lane behaviors, and high frequency of motorized two-wheelers. To resolve this, training inputs are augmented with annotated samples of local Indian roads containing mixed vehicle classes and weather constraints.</p>
+                                </div>
+                            </div>
+
+                            <!-- Tab Content: classifier.py Code -->
+                            <div id="research-tab-res-code" class="research-tab-content">
+                                <div class="glass-panel p-20" style="position: relative; margin-bottom: 20px;">
+                                    <button class="btn btn-secondary btn-sm" id="fetch-code-btn" style="position: absolute; right: 20px; top: 20px;">
+                                        <i class="fa-solid fa-rotate"></i> Refresh Source
+                                    </button>
+                                    <h3>classifier.py Source Code</h3>
+                                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 15px;">Fetched dynamically from workspace: `Python Demo/classifier.py`</p>
+                                    <pre style="background: rgba(0,0,0,0.25); padding: 15px; border-radius: 6px; overflow: auto; max-height: 500px; font-family: monospace; font-size: 0.8rem; border: 1px solid var(--border-color); color: var(--text-primary); text-align: left;" id="code-viewer-content">Loading source code...</pre>
+                                </div>
+                            </div>
+
+                            <!-- Tab Content: run.log Logs -->
+                            <div id="research-tab-res-logs" class="research-tab-content">
+                                <div class="glass-panel p-20" style="position: relative; margin-bottom: 20px;">
+                                    <button class="btn btn-secondary btn-sm" id="fetch-logs-btn" style="position: absolute; right: 20px; top: 20px;">
+                                        <i class="fa-solid fa-rotate"></i> Refresh Log
+                                    </button>
+                                    <h3>Original Model Run Execution Log</h3>
+                                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 15px;">Fetched dynamically from workspace: `Python Demo/run.log`</p>
+                                    <pre style="background: rgba(0,0,0,0.25); padding: 15px; border-radius: 6px; overflow: auto; max-height: 500px; font-family: monospace; font-size: 0.8rem; border: 1px solid var(--border-color); color: var(--text-primary); text-align: left;" id="logs-viewer-content">Loading execution logs...</pre>
+                                </div>
+                            </div>
+
+                            <!-- Tab Content: LICENSE -->
+                            <div id="research-tab-res-license" class="research-tab-content">
+                                <div class="glass-panel p-20" style="margin-bottom: 20px;">
+                                    <h3>GNU Affero General Public License v3.0</h3>
+                                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 15px;">Fetched dynamically from workspace: `LICENSE`</p>
+                                    <pre style="background: rgba(0,0,0,0.25); padding: 15px; border-radius: 6px; overflow: auto; max-height: 500px; font-family: monospace; font-size: 0.8rem; border: 1px solid var(--border-color); color: var(--text-primary); text-align: left;" id="license-viewer-content">Loading project license...</pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="research-sidebar-panel flex-column gap-20">
+                            <!-- Mobile Demo Card -->
+                            <div class="card glass-panel mobile-demo-details-card">
+                                <div class="card-header border-bottom">
+                                    <h3><i class="fa-brands fa-android text-success"></i> Mobile Client</h3>
+                                </div>
+                                <div class="card-body">
+                                    <p style="font-size: 0.85rem; line-height: 1.5; color: var(--text-secondary);">The Android client runs a compressed TensorFlow graph on-device. This enables emergency dispatch vehicles to detect accidents instantly on-the-road without standard cellular networks.</p>
+                                    <ul style="font-size: 0.8rem; margin: 15px 0; display: flex; flex-direction: column; gap: 8px;">
+                                        <li><i class="fa-solid fa-circle-check text-success"></i> Real-time image scaling to 300x300.</li>
+                                        <li><i class="fa-solid fa-circle-check text-success"></i> On-screen overlay layout coordinates.</li>
+                                        <li><i class="fa-solid fa-circle-check text-success"></i> Dynamic confidence threshold.</li>
+                                    </ul>
+                                    <button class="btn btn-secondary btn-block btn-sm" onclick="alert('Android project source code resides in \'Android App\' directory of the ZIP. Build via Android Studio.');">
+                                        View Android Code Path
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 6. DATASET HUB VIEW -->
+                <section id="dataset-view" class="view-section">
+                    <div class="glass-panel p-30" style="margin-bottom: 30px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                            <h2 style="margin: 0;">Indian Road Accident Dataset (IRAD-Custom)</h2>
+                            <div class="ai-voice-controls" style="display: flex; gap: 10px;">
+                                <button class="btn btn-accent btn-sm" id="voice-dataset-en-btn">
+                                    <i class="fa-solid fa-volume-high"></i> AI Voice (English)
+                                </button>
+                                <button class="btn btn-accent btn-sm" id="voice-dataset-ta-btn">
+                                    <i class="fa-solid fa-language"></i> AI Voice (Tamil)
+                                </button>
+                            </div>
+                        </div>
+                        <p class="lead" style="margin-top: 10px;">The dataset was specifically annotated to capture vehicle collisions under chaotic traffic and infrastructural conditions common in Indian metropolitan zones.</p>
+                        
+                        <div class="stats-row" style="margin-top: 25px; margin-bottom: 25px;">
+                            <div class="stat-card">
+                                <h3>5,500+</h3>
+                                <p>Annotated Image Frames</p>
+                                <span class="stat-desc">Representing multi-lane road networks.</span>
+                            </div>
+                            <div class="stat-card target">
+                                <h3>80 / 20</h3>
+                                <p>Train / Test Split Ratio</p>
+                                <span class="stat-desc">Divided into TFRecord structures.</span>
+                            </div>
+                            <div class="stat-card">
+                                <h3>1</h3>
+                                <p>Target Class ('car accident')</p>
+                                <span class="stat-desc">Defined in accidents.pbtxt.</span>
+                            </div>
+                        </div>
+
+                        <div class="about-grid">
+                            <div class="about-text-panel">
+                                <h3>Annotation & Format Pipeline</h3>
+                                <p style="font-size: 0.9rem; line-height: 1.6; margin-top: 10px;">The bounding boxes are defined according to the <strong>Pascal VOC XML</strong> structure, mapping each label coordinate to target objects. The source annotations are compiled into TensorFlow records (`train.record` and `test.record`) for high-throughput GPU ingestion during the 200,000 steps training loop.</p>
+                                <h4 style="margin-top: 20px;">Class Labels Mapping (accidents.pbtxt)</h4>
+                                <pre style="background: rgba(0,0,0,0.25); padding: 15px; border-radius: 6px; font-family: monospace; font-size: 0.8rem; border: 1px solid var(--border-color); color: var(--accent-blue); margin-top: 10px;">item {
+  id: 1
+  name: 'car accident'
+}</pre>
+                            </div>
+                            <div class="about-visual-panel">
+                                <h4>Sample Pascal VOC Annotation XML</h4>
+                                <pre style="background: rgba(0,0,0,0.25); padding: 15px; border-radius: 6px; font-family: monospace; font-size: 0.75rem; border: 1px solid var(--border-color); color: var(--text-primary); margin-top: 10px; overflow-x: auto; max-height: 250px;">&lt;annotation&gt;
+  &lt;folder&gt;images&lt;/folder&gt;
+  &lt;filename&gt;accident_104.jpg&lt;/filename&gt;
+  &lt;size&gt;
+    &lt;width&gt;300&lt;/width&gt;
+    &lt;height&gt;300&lt;/height&gt;
+    &lt;depth&gt;3&lt;/depth&gt;
+  &lt;/size&gt;
+  &lt;object&gt;
+    &lt;name&gt;car accident&lt;/name&gt;
+    &lt;bndbox&gt;
+      &lt;xmin&gt;38&lt;/xmin&gt;
+      &lt;ymin&gt;104&lt;/ymin&gt;
+      &lt;xmax&gt;265&lt;/xmax&gt;
+      &lt;ymax&gt;290&lt;/ymax&gt;
+    &lt;/bndbox&gt;
+  &lt;/object&gt;
+&lt;/annotation&gt;</pre>
+                                <h4 style="margin-top: 20px;">Dataset Visual Sample</h4>
+                                <div style="margin-top: 10px; border-radius: 6px; overflow: hidden; border: 1px solid var(--border-color);">
+                                    <img src="assets/sample-images/accident_1.jpg" alt="Dataset Sample" style="width: 100%; height: auto; display: block;" onerror="this.src='https://placehold.co/600x400/0d0e15/ffffff?text=Dataset+Sample'">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 7. MODEL ARCHITECTURE VIEW -->
+                <section id="architecture-view" class="view-section">
+                    <div class="glass-panel p-30" style="margin-bottom: 30px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <h2>SSD MobileNet V1 Architecture</h2>
+                            <button class="btn btn-accent btn-sm" id="explain-architecture-btn">
+                                <i class="fa-solid fa-volume-high"></i> AI Voice Explanation
+                            </button>
+                        </div>
+                        <p class="lead" style="margin-top: 10px;">SURE incorporates Single Shot Multibox Detector (SSD) alongside a MobileNetV1 feature extractor to minimize on-device inference latency.</p>
+                        
+                        <div class="about-grid" style="margin-top: 25px;">
+                            <div class="about-text-panel">
+                                <h3>Network Hyperparameters</h3>
+                                <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px; font-size: 0.85rem;">
+                                    <div class="info-row" style="border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                                        <span>Image Resizer</span>
+                                        <strong>300 x 300 (Fixed Shape)</strong>
+                                    </div>
+                                    <div class="info-row" style="border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                                        <span>Depth Multiplier</span>
+                                        <strong>1.0</strong>
+                                    </div>
+                                    <div class="info-row" style="border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                                        <span>Optimizer</span>
+                                        <strong>RMSProp (decay: 0.9, momentum: 0.9)</strong>
+                                    </div>
+                                    <div class="info-row" style="border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                                        <span>Learning Rate</span>
+                                        <strong>0.004 (exponentially decaying)</strong>
+                                    </div>
+                                    <div class="info-row" style="border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                                        <span>Batch Size</span>
+                                        <strong>16</strong>
+                                    </div>
+                                    <div class="info-row" style="padding-bottom: 8px;">
+                                        <span>Post-Processing NMS</span>
+                                        <strong>IoU threshold 0.60, Max Detections 20</strong>
+                                    </div>
+                                </div>
+                                
+                                <h3 style="margin-top: 25px;">Mathematical Formulation</h3>
+                                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 5px;">The model is trained to minimize a combined multi-task loss function:</p>
+                                <div class="formula-card" style="background: rgba(0, 0, 0, 0.2); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); margin-top: 10px; font-family: monospace; font-size: 0.9rem; text-align: center; color: var(--accent-blue);">
+                                    Loss = (1 / N) * [ L_conf(x, c) + &alpha; * L_loc(x, l, g) ]
+                                </div>
+                                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 5px;">Where N is the number of matched default boxes, L_loc is the localization smooth L1 loss, L_conf is the classification cross-entropy confidence loss, and &alpha; is a weight term (set to 1.0).</p>
+                            </div>
+                            
+                            <div class="about-visual-panel" style="display: flex; flex-direction: column; justify-content: center; gap: 15px;">
+                                <div class="new-flowchart" style="display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 25px 15px; background: #f9f9f9; border-radius: 12px; font-family: 'Outfit', sans-serif; position: relative; overflow: hidden; box-shadow: inset 0 0 10px rgba(0,0,0,0.05);">
+                                    <h3 style="align-self: flex-start; color: #1a1a1a; font-family: Georgia, serif; font-size: 1.6rem; font-weight: normal; margin-bottom: 5px; margin-top: 0; padding-left: 10px;">Now the flowchart:</h3>
+                                    
+                                    <!-- Node 1 -->
+                                    <div style="background: #e6f0fa; color: #2c5282; border: 1px solid #bee3f8; border-radius: 8px; padding: 12px 10px; text-align: center; width: 65%; max-width: 260px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); position: relative; z-index: 2;">
+                                        <div style="font-weight: 500; font-size: 0.95rem; margin-bottom: 2px;">Image / Video input</div>
+                                        <div style="font-size: 0.75rem;">Camera feed, CCTV, or static file</div>
+                                    </div>
+                                    
+                                    <div style="color: #718096; font-size: 1rem; line-height: 1; margin: -2px 0;"><i class="fa-solid fa-arrow-down"></i></div>
+                                    
+                                    <!-- Node 2 -->
+                                    <div style="background: #e6fffa; color: #234e52; border: 1px solid #b2f5ea; border-radius: 8px; padding: 12px 10px; text-align: center; width: 65%; max-width: 260px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); position: relative; z-index: 2;">
+                                        <div style="font-weight: 500; font-size: 0.95rem; margin-bottom: 2px;">Pre-processing</div>
+                                        <div style="font-size: 0.75rem;">Resize, normalize, frame extraction</div>
+                                    </div>
+                                    
+                                    <div style="color: #718096; font-size: 1rem; line-height: 1; margin: -2px 0;"><i class="fa-solid fa-arrow-down"></i></div>
+                                    
+                                    <!-- Node 3 -->
+                                    <div style="position: relative; width: 100%; display: flex; justify-content: center;">
+                                        <div style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); font-size: 0.7rem; color: #4a5568; text-align: right; width: 22%; line-height: 1.2;">
+                                            Python<br>classifier.py
+                                            <div style="position: absolute; right: -15px; top: 50%; width: 15px; border-top: 1px dashed #cbd5e0;"></div>
+                                        </div>
+                                        <div style="background: #ebf4ff; color: #434190; border: 1px solid #c3dafe; border-radius: 8px; padding: 12px 10px; text-align: center; width: 65%; max-width: 260px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); position: relative; z-index: 2;">
+                                            <div style="font-weight: 500; font-size: 0.95rem; margin-bottom: 2px;">TensorFlow OD API</div>
+                                            <div style="font-size: 0.75rem;">Object detection on Indian road dataset</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="color: #718096; font-size: 1rem; line-height: 1; margin: -2px 0;"><i class="fa-solid fa-arrow-down"></i></div>
+                                    
+                                    <!-- Node 4 -->
+                                    <div style="position: relative; width: 100%; display: flex; justify-content: center;">
+                                        <div style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); font-size: 0.7rem; color: #4a5568; text-align: right; width: 22%; line-height: 1.2;">
+                                            Android<br>TF Lite
+                                            <div style="position: absolute; right: -15px; top: 50%; width: 15px; border-top: 1px dashed #cbd5e0;"></div>
+                                        </div>
+                                        <div style="background: #fffaf0; color: #7b341e; border: 1px solid #feebc8; border-radius: 8px; padding: 12px 10px; text-align: center; width: 65%; max-width: 260px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); position: relative; z-index: 2;">
+                                            <div style="font-weight: 500; font-size: 0.95rem; margin-bottom: 2px;">Bounding box output</div>
+                                            <div style="font-size: 0.75rem;">Annotated frame + accident probability %</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="color: #718096; font-size: 1rem; line-height: 1; margin: -2px 0;"><i class="fa-solid fa-arrow-down"></i></div>
+                                    
+                                    <!-- Node 5 (Diamond + No path) -->
+                                    <div style="position: relative; display: flex; justify-content: center; width: 100%; align-items: center; padding: 5px 0;">
+                                        <div style="width: 100px; height: 60px; background: #f7fafc; border: 1px solid #e2e8f0; position: relative; display: flex; align-items: center; justify-content: center; transform: rotate(45deg); box-shadow: 0 2px 4px rgba(0,0,0,0.05); z-index: 2;">
+                                            <div style="transform: rotate(-45deg); text-align: center; color: #1a202c; font-size: 0.85rem; font-weight: 500; line-height: 1.2;">
+                                                Accident<br>detected?
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- No Path -->
+                                        <div style="position: absolute; right: 5%; display: flex; align-items: center; width: 45%; justify-content: flex-start; z-index: 1;">
+                                            <div style="height: 1.5px; background: #a0aec0; width: 25px; position: relative; margin-left: 20px;">
+                                                <div style="position: absolute; top: -18px; left: 5px; font-size: 0.75rem; color: #4a5568;">No</div>
+                                                <div style="position: absolute; right: -4px; top: -5px; color: #a0aec0; font-size: 0.7rem;"><i class="fa-solid fa-caret-right"></i></div>
+                                            </div>
+                                            <div style="background: #f4f5f7; color: #4a5568; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; text-align: center; font-size: 0.85rem; font-weight: 500; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-left: 5px; position: relative;">
+                                                Continue<br>monitoring
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="position: relative; color: #718096; font-size: 1rem; line-height: 1; margin: -2px 0;">
+                                        <div style="position: absolute; top: -10px; left: 15px; font-size: 0.75rem; color: #4a5568;">Yes</div>
+                                        <i class="fa-solid fa-arrow-down"></i>
+                                    </div>
+                                    
+                                    <!-- Node 6 -->
+                                    <div style="background: #fff5f5; color: #9b2c2c; border: 1px solid #fed7d7; border-radius: 8px; padding: 12px 10px; text-align: center; width: 65%; max-width: 260px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); position: relative; z-index: 2;">
+                                        <div style="font-weight: 500; font-size: 0.95rem; margin-bottom: 2px;">Emergency alert triggered</div>
+                                        <div style="font-size: 0.75rem;">Notify ambulance dispatch system</div>
+                                    </div>
+                                    
+                                    <div style="color: #718096; font-size: 1rem; line-height: 1; margin: -2px 0;"><i class="fa-solid fa-arrow-down"></i></div>
+                                    
+                                    <!-- Node 7 -->
+                                    <div style="background: #f0fff4; color: #276749; border: 1px solid #c6f6d5; border-radius: 8px; padding: 12px 10px; text-align: center; width: 65%; max-width: 260px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); position: relative; z-index: 2;">
+                                        <div style="font-weight: 500; font-size: 0.95rem; margin-bottom: 2px;">Annotated output saved</div>
+                                        <div style="font-size: 0.75rem;">Image / log with bounding boxes</div>
+                                    </div>
+                                    
+                                    <!-- Dotted connection from TF API to Continue Monitoring -->
+                                    <div style="position: absolute; top: 38%; right: 15%; width: 10%; height: 35%; border-right: 1.5px dashed #cbd5e0; border-top: 1.5px dashed #cbd5e0; border-top-right-radius: 12px; z-index: 0;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 8. REPORTS CENTER VIEW -->
+                <section id="reports-view" class="view-section">
+                    <div class="reports-grid" style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 30px;">
+                        <!-- Report Creator Form -->
+                        <div class="card glass-panel report-config-card">
+                            <div class="card-header border-bottom">
+                                <h3><i class="fa-solid fa-file-pen text-accent"></i> Compile Incident Report</h3>
+                            </div>
+                            <div class="card-body flex-column gap-20">
+                                <div class="form-group flex-column gap-5">
+                                    <label for="report-incident-select" style="font-size: 0.85rem; font-weight: 500;">Select Accident Event:</label>
+                                    <select id="report-incident-select" class="form-select">
+                                        <option value="">-- Choose verified incident --</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group flex-column gap-5">
+                                    <label for="report-traffic-density" style="font-size: 0.85rem; font-weight: 500;">Road Traffic Density:</label>
+                                    <select id="report-traffic-density" class="form-select">
+                                        <option value="High Density">High Density (Gridlock)</option>
+                                        <option value="Moderate Density" selected>Moderate Density (Normal Flow)</option>
+                                        <option value="Low Density">Low Density (Clear Highway)</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group flex-column gap-5">
+                                    <label style="font-size: 0.85rem; font-weight: 500;">Vehicles Involved:</label>
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 5px; font-size: 0.8rem;">
+                                        <label style="display: flex; align-items: center; gap: 8px;">
+                                            <input type="checkbox" class="report-vehicle-check" value="Car" checked> Cars
+                                        </label>
+                                        <label style="display: flex; align-items: center; gap: 8px;">
+                                            <input type="checkbox" class="report-vehicle-check" value="Truck" checked> Heavy Trucks
+                                        </label>
+                                        <label style="display: flex; align-items: center; gap: 8px;">
+                                            <input type="checkbox" class="report-vehicle-check" value="Bus"> Passenger Buses
+                                        </label>
+                                        <label style="display: flex; align-items: center; gap: 8px;">
+                                            <input type="checkbox" class="report-vehicle-check" value="Two-Wheeler"> Two-Wheelers
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group flex-column gap-5">
+                                    <label for="report-casualties" style="font-size: 0.85rem; font-weight: 500;">Estimated Casualties:</label>
+                                    <input type="number" id="report-casualties" class="form-input" min="0" value="1">
+                                </div>
+
+                                <div class="form-group flex-column gap-5">
+                                    <label for="report-officer-notes" style="font-size: 0.85rem; font-weight: 500;">Officer Audit Notes:</label>
+                                    <textarea id="report-officer-notes" class="form-input" rows="4" placeholder="Enter crash impact characteristics, vehicle plates, or dispatch delays..."></textarea>
+                                </div>
+
+                                <button class="btn btn-primary btn-block" id="generate-report-btn">
+                                    <i class="fa-solid fa-file-invoice"></i> Compile Official Report
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Report Visualizer Sheet -->
+                        <div class="card glass-panel report-viewer-card" id="report-sheet-container" style="min-height: 500px; display: flex; align-items: center; justify-content: center; text-align: center; padding: 30px;">
+                            <div id="report-empty-state">
+                                <i class="fa-solid fa-file-circle-question" style="font-size: 3.5rem; color: var(--text-muted); margin-bottom: 15px;"></i>
+                                <h3>No Report Generated</h3>
+                                <p style="font-size: 0.85rem; color: var(--text-muted); max-width: 320px; margin-top: 5px; margin-left: auto; margin-right: auto;">Please select a verified accident event from the left panel and click compile to generate a municipal incident summary sheet.</p>
+                            </div>
+                            
+                            <div id="report-document" class="report-document" style="display:none; text-align: left; width: 100%; font-family: 'Inter', sans-serif;">
+                                <div class="report-doc-header" style="border-bottom: 2px solid var(--accent-blue); padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <h2 style="color: var(--accent-blue); font-weight: 800;">SURE INCIDENT REPORT</h2>
+                                        <span style="font-size: 0.75rem; font-family: monospace; color: var(--text-muted);" id="rep-doc-id">REP-1602495819</span>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <h4 style="font-size: 0.85rem; font-weight: 700;">TRAFFIC CONTROL CELL</h4>
+                                        <span style="font-size: 0.75rem; color: var(--text-muted);">Govt. of Tamil Nadu</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="report-doc-body flex-column gap-20">
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 0.85rem;">
+                                        <div><strong>Timestamp:</strong> <span id="rep-doc-time">--</span></div>
+                                        <div><strong>CCTV Stream Location:</strong> <span id="rep-doc-loc">--</span></div>
+                                        <div><strong>Camera Node:</strong> <span id="rep-doc-node">--</span></div>
+                                        <div><strong>AI Evaluation Accuracy:</strong> <span id="rep-doc-score">--</span></div>
+                                    </div>
+                                    
+                                    <div style="background: rgba(255, 51, 102, 0.05); padding: 15px; border-radius: 6px; border: 1px solid rgba(255, 51, 102, 0.15); font-size: 0.85rem;">
+                                        <h4 style="color: var(--color-danger); font-weight: 700; margin-bottom: 5px;"><i class="fa-solid fa-triangle-exclamation"></i> CRASH EVALUATION SUMMARY</h4>
+                                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 10px;">
+                                            <div><strong>Severity Rank:</strong> <span id="rep-doc-severity">--</span></div>
+                                            <div><strong>Estimated Casualties:</strong> <span id="rep-doc-casualties">--</span></div>
+                                            <div><strong>Vehicles Identified:</strong> <span id="rep-doc-vehicles">--</span></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="font-size: 0.85rem;">
+                                        <h4 style="border-bottom: 1px solid var(--border-color); padding-bottom: 5px; margin-bottom: 8px; font-weight: 700;">Emergency Mobilization Log</h4>
+                                        <div style="display: flex; flex-direction: column; gap: 6px;" id="rep-doc-dispatches">
+                                            <!-- Dispatched info goes here -->
+                                        </div>
+                                    </div>
+
+                                    <div style="font-size: 0.85rem;">
+                                        <h4 style="border-bottom: 1px solid var(--border-color); padding-bottom: 5px; margin-bottom: 8px; font-weight: 700;">Operator Audit & Notes</h4>
+                                        <p style="font-style: italic; color: var(--text-secondary); line-height: 1.5;" id="rep-doc-notes">--</p>
+                                    </div>
+                                    
+                                    <div style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 15px;" class="report-actions-row">
+                                        <button class="btn btn-secondary btn-sm" id="rep-doc-save-btn"><i class="fa-solid fa-floppy-disk"></i> Save Report</button>
+                                        <button class="btn btn-secondary btn-sm" id="rep-doc-download-btn"><i class="fa-solid fa-file-pdf"></i> Download PDF</button>
+                                        <button class="btn btn-secondary btn-sm" id="rep-doc-print-btn"><i class="fa-solid fa-print"></i> Print Report</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- History Detail Modal -->
+    <div class="modal-backdrop" id="history-modal" style="display:none">
+        <div class="modal glass-panel">
+            <div class="modal-header">
+                <h3>Incident Log Details</h3>
+                <button class="btn-icon" id="close-modal-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" id="modal-details-content">
+                <!-- Javascript will load this dynamically -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="modal-print-btn"><i class="fa-solid fa-print"></i> Print Details</button>
+                <button class="btn btn-primary" id="modal-close-action-btn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet Map JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Socket.IO Client -->
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <!-- Custom Application Javascript -->
+    <script src="app.js"></script>
+    
+    <!-- New SURE Project Enhancements -->
+    <script src="hospital_service/hospital_service.js"></script>
+    <script src="route_optimizer/route_optimizer.js"></script>
+    <script src="weather_risk_engine/weather_risk.js"></script>
+    <script src="voice_assistant/voice_assistant.js"></script>
+    <script src="prevention_ai/prevention_ai.js"></script>
+    
+    <!-- Vehicle Registry -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="vehicle_registry/vehicle_dashboard.js"></script>
+</body>
+</html>

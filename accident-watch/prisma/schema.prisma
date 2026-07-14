@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Incident {
+  id           String        @id @default(cuid())
+  createdAt    DateTime      @default(now())
+  lat          Float
+  lng          Float
+  severity     String
+  status       String        @default("NEW")
+  photoUrl     String?
+  confidence   Float?
+  detectedBy   String
+  vehicleTypes String[]
+  reporterId   String?
+  notes        String?
+  address      String?
+  resolvedAt   DateTime?
+  alertActions AlertAction[]
+}
+
+model AlertAction {
+  id         String   @id @default(cuid())
+  incidentId String
+  action     String
+  userId     String
+  timestamp  DateTime @default(now())
+  incident   Incident @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id       String  @id @default(cuid())
+  email    String  @unique
+  phone    String?
+  role     String  @default("PUBLIC")
+  district String?
+}

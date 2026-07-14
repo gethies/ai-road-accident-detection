@@ -1,0 +1,48 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: accidentwatch
+      POSTGRES_PASSWORD: accidentwatch
+      POSTGRES_DB: accidentwatch
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U accidentwatch"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://accidentwatch:accidentwatch@postgres:5432/accidentwatch
+      PYTHON_DEMO_PATH: /app/python-demo
+      DETECTION_CONFIDENCE_THRESHOLD: "0.5"
+      CORS_ORIGINS: '["http://localhost:3000"]'
+    volumes:
+      - ./backend/uploads:/app/uploads
+      - ../Accident-Detection-on-Indian-Roads-master/Python Demo:/app/python-demo:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:
